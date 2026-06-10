@@ -9,7 +9,7 @@ CREATE TABLE veterinarios (
  nome VARCHAR(100) NOT NULL,
  crmv VARCHAR(20) NOT NULL UNIQUE,
  especialidade VARCHAR(50) NOT NULL, 
- telefone VARCHAR(15) NOT NULL
+ telefone VARCHAR(20) NOT NULL
 ); 
 
 -- TABELA DE TUTORES  
@@ -18,7 +18,7 @@ CREATE TABLE tutores (
  nome VARCHAR(100) NOT NULL,
  cpf VARCHAR(14) NOT NULL UNIQUE,
  email VARCHAR(100) NOT NULL,
- telefone VARCHAR(100) NOT NULL
+ telefone VARCHAR(20) NOT NULL
 );
  
 -- TABELA DE ANIMAIS
@@ -32,7 +32,7 @@ CREATE TABLE animais (
  data_nascimento DATE,
  tutor_id INT NOT NULL,
  
- CONSTRAINT fk_animail_tutor
+ CONSTRAINT fk_animal_tutor
  FOREIGN KEY (tutor_id) 
  REFERENCES tutores(id_tutor) 
 );
@@ -144,6 +144,8 @@ WHERE id_consulta = 3;
 
 
 -- Parte 5
+-- Garantir que não exista antes de criar
+DROP PROCEDURE IF EXISTS agendar_consulta;
 
 DELIMITER $$
 
@@ -181,6 +183,8 @@ CALL agendar_consulta(1, 1, '2023-11-20 10:00:00', 150.00);
 -- CALL agendar_consulta(9, 1, '2026-11-20 10:00:00', 150.00);
 
 -- Parte 6
+-- Garantir que não exista antes de criar
+DROP FUNCTION IF EXISTS total_consultas_animal;
 
 DELIMITER $$
 

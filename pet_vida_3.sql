@@ -1,4 +1,4 @@
-USE pet_vida;
+
 
 DELIMITER $$
 
@@ -76,13 +76,18 @@ END $$
 DROP PROCEDURE IF EXISTS sp_registrar_pagamento $$
 CREATE PROCEDURE sp_registrar_pagamento(
     IN p_consulta_id INT,
-    IN p_forma ENUM('pix', 'cartao', 'dinheiro', 'convenio')
+    IN p_forma VARCHAR(10)
 )
 BEGIN
     DECLARE v_status_atual VARCHAR(20);
+    -- Valida forma de pagamento (ENUM em parâmetro pode não ser suportado)
+    IF p_forma NOT IN ('pix','cartao','dinheiro','convenio') THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Forma de pagamento inválida.';
+    END IF;
 
     -- VALIDAÇÕES DE PAGAMENTO E ATUALIZAÇÃO DE STATUS
-    SELECT status INTO v_status_atual FROM pagamentos WHERE consulta_id = p_consulta_id;
+    -- Caso haja mais de um registro de pagamento, considera o mais recente
+    SELECT status INTO v_status_atual FROM pagamentos WHERE consulta_id = p_consulta_id ORDER BY id_pagamento DESC LIMIT 1;
     
     IF v_status_atual IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Pagamento não encontrado para esta consulta.';
