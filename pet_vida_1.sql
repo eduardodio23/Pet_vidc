@@ -232,3 +232,6 @@ FLUSH PRIVILEGES;
 -- REVOKE (Caso a recepcionista saia da clínica)
 
 REVOKE ALL PRIVILEGES, GRANT OPTION FROM 'recepcionista'@'localhost';
+
+
+SELECT COUNT(*) FROM animais;

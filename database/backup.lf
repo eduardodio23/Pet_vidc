@@ -1,0 +1,24 @@
+
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BACKUP_DIR="$SCRIPT_DIR/../backups"
+mkdir -p "$BACKUP_DIR"
+DATE=$(date +%Y%m%d)
+BACKUP_FILE="$BACKUP_DIR/petvida_${DATE}.sql"
+
+if [ -n "$DB_PASS" ]; then
+  PASS_OPTION="-p$DB_PASS"
+else
+  PASS_OPTION=""
+fi
+
+echo "Gerando backup em: $BACKUP_FILE"
+mysqldump -u "${DB_USER:-root}" $PASS_OPTION pet_vida > "$BACKUP_FILE"
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+  echo "Erro ao gerar backup. Verifique se mysqldump está instalado e as credenciais estão corretas."
+  exit $EXIT_CODE
+fi
+
+echo "Backup concluído: $BACKUP_FILE"

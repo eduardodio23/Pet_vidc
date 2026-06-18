@@ -167,10 +167,10 @@ END $$
 DELIMITER ;
 
 -- SUCESSO: Agendando consulta válida (Animal 1, Vet 1)
-CALL sp_agendar_consulta(1, 1, '2026-06-06 15:00:00', 150.00);
+CALL sp_agendar_consulta(1, 1, '2026-06-06 11:00:00', 150.00);
 
 -- ERRO: Ao Tentar agendar no mesmo horário e vet (vai disparar o SIGNAL)
-CALL sp_agendar_consulta(2, 1, '2026-06-06 15:00:00', 120.00);
+CALL sp_agendar_consulta(2, 1, '2026-06-06 12:00:00', 120.00);
 
 -- ERRO: Animal inexistente (Animal 999)
 CALL sp_agendar_consulta(999, 1, '2026-06-06 10:00:00', 100.00);
