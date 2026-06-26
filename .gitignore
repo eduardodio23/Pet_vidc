@@ -1,0 +1,39 @@
+# Node
+node_modules/
+npm-debug.log*
+package-lock.json
+yarn.lock
+
+# Environment
+.env
+.env.*.local
+
+# Logs
+logs
+*.log
+pids
+*.pid
+*.seed
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Database backups
+backups/
+
+# Optional
+coverage/
+coverage/**/*
+.nyc_output/
+
+# Temporary
+tmp/
+*.tmp
+
+# Ignore local database file if created
+*.sqlite
