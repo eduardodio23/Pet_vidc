@@ -79,29 +79,32 @@ CREATE PROCEDURE sp_registrar_pagamento(
     IN p_forma VARCHAR(10)
 )
 BEGIN
+    DECLARE v_pagamento_id INT;
     DECLARE v_status_atual VARCHAR(20);
-    -- Valida forma de pagamento (ENUM em parâmetro pode não ser suportado)
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET v_pagamento_id = NULL;
+
     IF p_forma NOT IN ('pix','cartao','dinheiro','convenio') THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Forma de pagamento inválida.';
     END IF;
 
-    -- VALIDAÇÕES DE PAGAMENTO E ATUALIZAÇÃO DE STATUS
-    -- Caso haja mais de um registro de pagamento, considera o mais recente
-    SELECT status INTO v_status_atual FROM pagamentos WHERE consulta_id = p_consulta_id ORDER BY id_pagamento DESC LIMIT 1;
-    
-    IF v_status_atual IS NULL THEN
+    SELECT id_pagamento, status
+    INTO v_pagamento_id, v_status_atual
+    FROM pagamentos
+    WHERE consulta_id = p_consulta_id
+    ORDER BY id_pagamento DESC
+    LIMIT 1;
+
+    IF v_pagamento_id IS NULL THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Pagamento não encontrado para esta consulta.';
     END IF;
 
-  
     IF v_status_atual = 'pago' THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Este pagamento já foi realizado.';
     END IF;
 
-  
     UPDATE pagamentos 
     SET status = 'pago', forma_pagamento = p_forma, data_pagamento = CURDATE()
-    WHERE consulta_id = p_consulta_id;
+    WHERE id_pagamento = v_pagamento_id;
 END $$
 
 
@@ -142,6 +145,8 @@ CREATE PROCEDURE sp_cadastrar_animal(
     IN p_nome VARCHAR(50),
     IN p_especie_id INT,
     IN p_raca VARCHAR(50),
+    IN p_sexo VARCHAR(9),
+    IN p_peso DECIMAL(5,2),
     IN p_nascimento DATE,
     IN p_tutor_id INT
 )
@@ -151,16 +156,13 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Espécie não cadastrada.';
     END IF;
 
-    
     IF NOT EXISTS (SELECT 1 FROM tutores WHERE id_tutor = p_tutor_id) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Tutor não encontrado.';
     END IF;
 
-    
     INSERT INTO animais (nome, especie_id, raca, sexo, peso, data_nascimento, tutor_id)
-    VALUES (p_nome, p_especie_id, p_raca, NULL, 0.1, p_nascimento, p_tutor_id);
-    
-  
+    VALUES (p_nome, p_especie_id, p_raca, p_sexo, p_peso, p_nascimento, p_tutor_id);
+
     SELECT LAST_INSERT_ID() AS id_animal_cadastrado;
 END $$
 
@@ -174,7 +176,6 @@ CALL sp_agendar_consulta(2, 1, '2026-06-06 12:00:00', 120.00);
 
 -- ERRO: Animal inexistente (Animal 999)
 CALL sp_agendar_consulta(999, 1, '2026-06-06 10:00:00', 100.00);
-
 
 -- SUCESSO: Concluindo a consulta agendada acima (usando o id 21)
 CALL sp_concluir_consulta(21, 'Animal saudável, vacina aplicada com sucesso.');
@@ -196,12 +197,11 @@ CALL sp_cancelar_consulta(22);
 CALL sp_cancelar_consulta(999);
 
 -- SUCESSO: Cadastrar um novo Cachorro (espécie 1) para o Tutor 1
-CALL sp_cadastrar_animal('Max', 1, 'Bulldog', '2026-06-10', 1);
+CALL sp_cadastrar_animal('Max', 1, 'Bulldog', 'Macho', 28.50, '2026-06-10', 1);
 
 -- ERRO: Espécie inexistente (Espécie 99)
-CALL sp_cadastrar_animal('Rex II', 99, 'Pug', '2026-06-11', 1);
-
+CALL sp_cadastrar_animal('Rex II', 99, 'Pug', 'Macho', 12.00, '2026-06-11', 1);
 
 -- ERRO: Tutor inexistente (Tutor 999)
-CALL sp_cadastrar_animal('Bolinha', 2, 'SRD', '2020-05-05', 999);
+CALL sp_cadastrar_animal('Bolinha', 2, 'SRD', 'Fêmea', 9.00, '2020-05-05', 999);
 

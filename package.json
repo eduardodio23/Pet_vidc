@@ -1,0 +1,28 @@
+{
+  "name": "pet_vidc",
+  "version": "1.0.0",
+  "description": "API REST Pet_vida - clinica veterinaria",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "npx nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eduardodio23/Pet_vidc.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/eduardodio23/Pet_vidc/issues"
+  },
+  "homepage": "https://github.com/eduardodio23/Pet_vidc#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mysql2": "^3.22.5"
+  }
+}

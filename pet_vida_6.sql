@@ -31,11 +31,13 @@ CREATE PROCEDURE sp_cadastrar(
     IN p_nome VARCHAR(50),
     IN p_especie_id INT,
     IN p_raca VARCHAR(50),
+    IN p_sexo VARCHAR(9),
+    IN p_peso DECIMAL(5,2),
     IN p_nascimento DATE,
     IN p_tutor_id INT
 )
 BEGIN
-    CALL sp_cadastrar_animal(p_nome, p_especie_id, p_raca, p_nascimento, p_tutor_id);
+    CALL sp_cadastrar_animal(p_nome, p_especie_id, p_raca, p_sexo, p_peso, p_nascimento, p_tutor_id);
 END $$
 DELIMITER ;
 
