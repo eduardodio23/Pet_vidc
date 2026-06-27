@@ -4,8 +4,9 @@
   "description": "API REST Pet_vida - clinica veterinaria",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "npx nodemon server.js"
+    "start": "node serve.js",
+    "dev": "npx nodemon serve.js",
+    "test": "node test/api.test.js"
   },
   "repository": {
     "type": "git",
