@@ -115,5 +115,5 @@ npm test
 
 ## Autor
 
-Eduardo Diógenes  
+Eduardo Felipe  
 LinkedIn: [linkedin.com](https://www.linkedin.com/)
