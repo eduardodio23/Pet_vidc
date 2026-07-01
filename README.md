@@ -1,132 +1,119 @@
-# Pet_vidc
+# PetVida
 
-## Como conectar ao banco de dados
+![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-22-339933?logo=node.js&logoColor=white)
+![Express](https://img.shields.io/badge/Express-5.x-000000?logo=express&logoColor=white)
 
-### 1) Instalar MySQL
+PetVida é uma API REST para gestão de clínica veterinária, com foco em cadastro de pets, consultas, pagamentos e relatórios financeiros. O projeto conecta um banco MySQL com uma aplicação Node.js/Express, permitindo integrar procedimentos armazenados, views e regras de negócio em um fluxo completo de uso real.
 
-No Windows, instale o MySQL Community Server e o MySQL Shell/Client.
+A proposta do sistema é demonstrar como SQL e backend podem trabalhar juntos em uma solução prática, com endpoints para agenda, conclusão de consultas, registro de pagamentos e relatórios. O projeto foi desenvolvido como parte de uma atividade prática de banco de dados e API, com foco em organização, boas práticas e apresentação para avaliação.
 
-### 2) Iniciar o servidor MySQL
+![Diagrama ER do PetVida](docs/der.png)
 
-- Abra o MySQL Server como serviço no Windows ou use o MySQL Workbench.
-- Se estiver usando a linha de comando, verifique se o serviço está em execução.
+## Tecnologias utilizadas
 
-### 3) Conectar usando o cliente MySQL
+- Node.js
+- Express.js
+- MySQL 8
+- mysql2
+- dotenv
+- cors
+- Docker (opcional para subir o banco localmente)
 
-No terminal `cmd`, execute:
+## Instalação e execução
 
-```bash
-mysql -u root -p
-```
-
-Depois digite a senha do usuário `root`.
-
-Para conectar diretamente ao banco de dados `pet_vida`:
-
-```bash
-mysql -u root -p pet_vida
-```
-
-> Substitua `root` pelo seu usuário e digite a senha quando solicitado.
-
-#### Problema: `'mysql' não é reconhecido`
-
-Se aparecer este erro, significa que o cliente não está no PATH do Windows ou o servidor MySQL não está configurado corretamente.
-
-1) Verifique se o MySQL está instalado.
-2) No seu sistema, o executável está em:
+### 1. Clonar o repositório
 
 ```bash
-"C:\Program Files\MySQL\MySQL Server 8.3\bin\mysql.exe"
+git clone https://github.com/eduardodio23/Pet_vidc.git
+cd Pet_vidc
 ```
 
-3) Use o caminho completo para conectar:
+### 2. Instalar dependências
 
 ```bash
-"C:\Program Files\MySQL\MySQL Server 8.3\bin\mysql.exe" -u root -p pet_vida
+npm install
 ```
 
-4) Se ainda houver erro, pode ser que o servidor MySQL não esteja em execução:
-- Abra o `MySQL Installer` ou o `Services` do Windows.
-- Procure por um serviço como `MySQL80` ou `MySQL`.
-- Inicie o serviço.
+### 3. Subir o banco MySQL
 
-5) Para deixar o comando `mysql` disponível em qualquer terminal, adicione ao PATH:
-- Abra o Painel de Controle > Sistema > Configurações avançadas do sistema.
-- Clique em `Variáveis de Ambiente`.
-- Em `Path`, adicione:
+Você pode usar o Docker localmente:
+
+```bash
+docker run --name petvida-mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=pet_vida -p 3306:3306 -d mysql:8.0
+```
+
+Ou utilizar um MySQL já configurado na máquina.
+
+### 4. Importar o esquema e os dados
+
+```bash
+mysql -h 127.0.0.1 -uroot -proot pet_vida < database/schema.sql
+mysql -h 127.0.0.1 -uroot -proot pet_vida < database/seeds.sql
+mysql -h 127.0.0.1 -uroot -proot pet_vida < database/views.sql
+mysql -h 127.0.0.1 -uroot -proot pet_vida < database/triggers.sql
+mysql -h 127.0.0.1 -uroot -proot pet_vida < database/functions.sql
+mysql -h 127.0.0.1 -uroot -proot pet_vida < database/security.sql
+```
+
+### 5. Iniciar a API
+
+```bash
+npm start
+```
+
+A API ficará disponível em:
 
 ```text
-C:\Program Files\MySQL\MySQL Server 8.3\bin
+http://localhost:3001/api
 ```
 
-6) Feche e reabra o terminal `cmd` e tente novamente.
-
-### 4) Importar o esquema e os dados
-
-Execute os scripts SQL na ordem correta:
+### 6. Rodar testes
 
 ```bash
-mysql -u root -p < pet_vida_1.sql
-mysql -u root -p < pet_vida_2.sql
-mysql -u root -p < pet_vida_3.sql
-mysql -u root -p < pet_vida_4.sql
-mysql -u root -p < pet_vida_5.sql
-mysql -u root -p < pet_vida_6.sql
-mysql -u root -p pet_vida < pet_vida_7.sql
+npm test
 ```
 
-### 5) Executar relatórios
+## Endpoints da API
 
-Dentro do banco `pet_vida`, você pode rodar o arquivo de relatórios:
+| Método | Endpoint | Descrição |
+| --- | --- | --- |
+| GET | /api/health | Verifica a conexão com o banco |
+| GET | /api/veterinarios | Lista veterinários |
+| GET | /api/animais | Lista animais via view |
+| GET | /api/agenda/:data | Lista agenda de uma data |
+| POST | /api/consultas | Agenda uma consulta via procedure |
+| PUT | /api/consultas/:id/concluir | Conclui uma consulta via procedure |
+| POST | /api/pagamentos/:consulta_id | Registra pagamento via procedure |
+| GET | /api/relatorios/dashboard | Retorna dados financeiros do dashboard |
+| GET | /api/relatorios/inadimplentes | Lista consultas pendentes |
 
-```bash
-mysql -u root -p pet_vida < database/reports.sql
+## Estrutura de pastas
+
+```text
+.
+├── backups/
+├── database/
+│   ├── functions.sql
+│   ├── reports.sql
+│   ├── schema.sql
+│   ├── security.sql
+│   ├── seeds.sql
+│   ├── triggers.sql
+│   └── views.sql
+├── docs/
+│   └── der.png
+├── src/
+│   ├── app.js
+│   ├── config/
+│   └── routes/
+├── test/
+├── package.json
+├── serve.js
+└── README.md
 ```
 
-### 6) Conectar com ferramentas gráficas
+## Autor
 
-Se preferir, use:
-
-- MySQL Workbench
-- HeidiSQL
-- DBeaver
-
-Basta configurar conexão para:
-
-- Host: `localhost`
-- Porta: `3306`
-- Banco: `pet_vida`
-- Usuário: `root` (ou outro que você tenha)
-- Senha: sua senha MySQL
-
-### 7) Conectar via VS Code
-
-#### Opção 1: Terminal integrado
-
-1. Abra o terminal integrado no VS Code: `Ctrl + ``.
-2. Navegue até o projeto:
-   ```bash
-   cd c:\Users\aluno.den\Documents\Pet_vidc
-   ```
-3. Conecte com o cliente MySQL:
-   ```bash
-   mysql -u root -p pet_vida
-   ```
-4. Se `mysql` não for reconhecido, use o caminho completo do executável:
-   ```bash
-   "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe" -u root -p pet_vida
-   ```
-
-#### Opção 2: Extensão de banco de dados no VS Code
-
-1. Instale uma extensão como `SQLTools`, `MySQL`, `MySQL Manager` ou `MySQL Shell`.
-2. Crie uma nova conexão com:
-   - Host: `localhost`
-   - Porta: `3306`
-   - Usuário: `root`
-   - Senha: sua senha MySQL
-   - Banco: `pet_vida`
-3. Abra ou crie um arquivo `.sql` e execute as consultas com a extensão.
-
-> A vantagem do VS Code é que você pode editar os arquivos SQL e rodá-los no mesmo ambiente, sem sair do editor.
+Eduardo Diógenes  
+LinkedIn: [linkedin.com](https://www.linkedin.com/)

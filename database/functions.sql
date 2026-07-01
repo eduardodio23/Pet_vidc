@@ -58,10 +58,10 @@ RETURNS VARCHAR(50)
 DETERMINISTIC
 BEGIN
     RETURN CASE p_status
-        WHEN 'agendada' THEN '📅 Agendada'
-        WHEN 'concluida' THEN '✅ Concluída'
-        WHEN 'cancelada' THEN '❌ Cancelada'
-        WHEN 'em_atendimento' THEN '🏥 Em Atendimento'
+        WHEN 'agendada' THEN 'Agendada'
+        WHEN 'concluida' THEN 'Concluida'
+        WHEN 'cancelada' THEN 'Cancelada'
+        WHEN 'em_atendimento' THEN 'Em Atendimento'
         ELSE p_status
     END;
 END $$

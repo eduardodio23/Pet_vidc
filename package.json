@@ -13,8 +13,8 @@
     "url": "git+https://github.com/eduardodio23/Pet_vidc.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Eduardo Diógenes",
+  "license": "MIT",
   "type": "commonjs",
   "bugs": {
     "url": "https://github.com/eduardodio23/Pet_vidc/issues"
